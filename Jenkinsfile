@@ -7,6 +7,12 @@ pipeline {
             }
         }
         stage('Install & Test') {
+            agent {
+                docker {
+                    image 'python:3.11-slim'
+                    args '-u root'
+                }
+            }
             steps {
                 sh 'pip install -r requirements.txt'
                 sh 'pytest --junitxml=report.xml'
@@ -20,7 +26,7 @@ pipeline {
     }
     post {
         always {
-            junit 'report.xml'
+            junit allowEmptyResults: true, testResults: 'report.xml'
         }
     }
 }
